@@ -1,52 +1,54 @@
 #include "mainwindow.h"
-#include "ui_mainwindow.h"
-#include <QGraphicsDropShadowEffect>
-#include <QWidget>
-#include <QMouseEvent>
+#include <QApplication>
+#include <QScreen>
+#include <QPushButton>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
 
-
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
+MainWindow::MainWindow(QWidget *parent) : QMainWindow{parent}
 {
-    setWindowFlags(Qt::FramelessWindowHint); // 无边框
-    setAttribute(Qt::WA_TranslucentBackground); // 透明背景
-    setStyleSheet("background: transparent;"); // 确保样式也是透明的
-
-    // 创建阴影效果
-    QGraphicsDropShadowEffect *shadowEffect = new QGraphicsDropShadowEffect(this);
-    shadowEffect->setColor(Qt::black); // 阴影颜色
-    shadowEffect->setOffset(0, 0);    // 阴影偏移
-    shadowEffect->setBlurRadius(20);  // 模糊半径
-    setGraphicsEffect(shadowEffect);
+    initView();
 
 
 
 
-    ui->setupUi(this);
 }
 
-MainWindow::~MainWindow()
+void MainWindow::initView()
 {
-    delete ui;
+    QWidget *window = new QWidget;
+    setCentralWidget(window);
+    resize(1920,1080);
+    // 获取屏幕尺寸
+    QScreen* screen = QApplication::primaryScreen();
+    QRect screenGeometry = screen->availableGeometry();
+    // 设置窗口位置，使其居中
+    setGeometry((screenGeometry.width() - width()) / 2, (screenGeometry.height() - height()) / 2, width(), height());
+
+
+    // 创建若干个子窗口对象
+    QPushButton *button1 = new QPushButton("One");
+    QPushButton *button2 = new QPushButton("Two");
+    QPushButton *button3 = new QPushButton("Three");
+    QPushButton *button4 = new QPushButton("Four");
+    QPushButton *button5 = new QPushButton("Five");
+
+
+
+    // 创建水平布局对象
+    QHBoxLayout *layout = new QHBoxLayout;
+    // 将子窗口添加到布局中
+    layout->addWidget(button1);
+    layout->addWidget(button2);
+    layout->addWidget(button3);
+    layout->addWidget(button4);
+    layout->addWidget(button5);
+
+    // 将水平布局设置给父窗口对象
+    window->setLayout(layout);
+
+
+
+
+
 }
-
-
-
-
-void MainWindow::mousePressEvent(QMouseEvent *event)
-{
-    //鼠标刚点击的时候，求出相对位置
-    m_mouse_pos = event->globalPosition();
-    m_window_pos = this->pos();
-    m_diff_pos = m_mouse_pos - m_window_pos;
-}
-
-void MainWindow::mouseMoveEvent(QMouseEvent *event)
-{
-    //鼠标移动后
-    //获取鼠标移动后的全局位置
-    QPointF pos = event->globalPosition();
-    this->move(pos.x() - m_diff_pos.x(), pos.y()- m_diff_pos.y());//鼠标位置减去相对距离
-}
-
